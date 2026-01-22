@@ -1,0 +1,31 @@
+﻿@model IkinciElSatis.Models.Category
+@{
+    ViewData["Title"] = "Kategori Ekle";
+}
+
+<div class="container mt-4">
+    <h2>Yeni Kategori Ekle</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Create">
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" placeholder="Örn: Ekran Kartları" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Üst Kategori (Opsiyonel)</label>
+                    <select asp-for="ParentId" class="form-select" asp-items="ViewBag.MainCategories">
+                        <option value="">-- Yok (Bu bir Ana Kategoridir) --</option>
+                    </select>
+                    <small class="text-muted">Eğer bu bir alt kategoriyse (örn: Bilgisayar Parçaları), üstünü seçin.</small>
+                </div>
+
+                <button type="submit" class="btn btn-success">Kaydet</button>
+                <a asp-action="Index" class="btn btn-secondary">İptal</a>
+            </form>
+        </div>
+    </div>
+</div>

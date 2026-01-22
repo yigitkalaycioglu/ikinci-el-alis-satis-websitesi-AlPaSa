@@ -1,0 +1,133 @@
+﻿@model IkinciElSatis.Models.Product
+
+@{
+    ViewData["Title"] = Model.Name;
+    bool isFav = ViewBag.IsFavorited != null && (bool)ViewBag.IsFavorited;
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none">Anasayfa</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Product" asp-action="Index" class="text-decoration-none">Vitrin</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm overflow-hidden rounded-4">
+                @if (!string.IsNullOrEmpty(Model.ImagePath))
+                {
+                    <img src="/products/@Model.ImagePath" class="img-fluid w-100" style="object-fit: cover; max-height: 500px;" alt="@Model.Name">
+                }
+                else
+                {
+                    <div class="bg-light d-flex align-items-center justify-content-center text-muted" style="height: 400px;">
+                        <div class="text-center">
+                            <i class="bi bi-camera-fill display-1"></i>
+                            <p>Görsel Yok</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h1 class="fw-bold mb-2">@Model.Name</h1>
+            <p class="text-muted mb-4">
+                <i class="bi bi-folder-fill text-warning me-1"></i> @(Model.Category?.Name ?? "Kategori Yok")
+            </p>
+
+            <h2 class="text-primary fw-bold mb-4 display-6">@Model.Price.ToString("C0")</h2>
+
+            <div class="card bg-light border-0 rounded-3 mb-4">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-2"><i class="bi bi-text-left me-2"></i>Açıklama</h6>
+                    <p class="card-text text-secondary">@Model.Description</p>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center mb-4 p-3 border rounded-3">
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px; font-size: 1.5rem;">
+                    <i class="bi bi-person"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block">Satıcı</small>
+                    <a asp-controller="Seller" asp-action="Profile" asp-route-id="@Model.UserId" class="text-decoration-none fw-bold text-dark fs-5 hover-underline">
+                        @(Model.User?.FirstName + " " + Model.User?.LastName ?? "Bilinmeyen Kullanıcı")
+                    </a>
+                </div>
+            </div>
+
+            <div class="d-grid gap-3">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a asp-controller="Message" asp-action="Create" asp-route-receiverId="@Model.UserId" asp-route-relatedProduct="@Model.Name" class="btn btn-success btn-lg">
+                        <i class="bi bi-chat-dots-fill me-2"></i> Satıcıya Mesaj Gönder
+                    </a>
+
+                    <button class="btn btn-outline-danger btn-lg" id="favBtn" onclick="toggleDetailFavorite(@Model.Id)">
+                        <i class="@(isFav ? "bi bi-heart-fill" : "bi bi-heart") me-2" id="favIcon"></i>
+                        <span id="favText">@(isFav ? "Favorilerden Çıkar" : "Favorilere Ekle")</span>
+                    </button>
+                }
+                else
+                {
+                    <a href="/Account/Login" class="btn btn-primary btn-lg">
+                        <i class="bi bi-box-arrow-in-right me-2"></i> İletişim İçin Giriş Yap
+                    </a>
+                }
+
+                @if (User.IsInRole("Admin") || User.Identity.Name == Model.User?.UserName)
+                {
+                    <div class="row g-2 mt-2">
+                        <div class="col">
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning w-100">Düzenle</a>
+                        </div>
+                        <div class="col">
+                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger w-100">Sil</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleDetailFavorite(productId) {
+            var btn = document.getElementById("favBtn");
+            btn.disabled = true;
+
+            $.post('/Favorite/Toggle/' + productId, function (response) {
+                if (response.success) {
+                    var icon = document.getElementById("favIcon");
+                    var text = document.getElementById("favText");
+
+                    if (response.status === "added") {
+                        icon.className = "bi bi-heart-fill me-2";
+                        text.innerText = "Favorilerden Çıkar";
+                    } else {
+                        icon.className = "bi bi-heart me-2";
+                        text.innerText = "Favorilere Ekle";
+                    }
+                } else {
+                    alert("İşlem başarısız: " + response.message);
+                }
+                btn.disabled = false;
+            }).fail(function() {
+                alert("Sunucu hatası.");
+                btn.disabled = false;
+            });
+        }
+    </script>
+
+    <style>
+        .hover-underline:hover {
+            text-decoration: underline !important;
+            color: #0d6efd !important; /* Bootstrap primary color */
+        }
+    </style>
+}

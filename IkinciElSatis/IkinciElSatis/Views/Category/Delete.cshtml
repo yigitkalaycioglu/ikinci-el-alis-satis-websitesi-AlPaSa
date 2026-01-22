@@ -1,0 +1,21 @@
+﻿@model IkinciElSatis.Models.Category
+
+@{
+    ViewData["Title"] = "Kategori Sil";
+}
+
+<div class="container mt-4">
+    <h3 class="text-danger">Bu kategoriyi silmek istediğinize emin misiniz?</h3>
+    <div class="card mt-3" style="max-width: 500px;">
+        <div class="card-body">
+            <h5 class="card-title">@Model.Name</h5>
+            <p class="card-text">@Model.Description</p>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger">Evet, Sil</button>
+                <a asp-action="Index" class="btn btn-secondary">İptal</a>
+            </form>
+        </div>
+    </div>
+</div>

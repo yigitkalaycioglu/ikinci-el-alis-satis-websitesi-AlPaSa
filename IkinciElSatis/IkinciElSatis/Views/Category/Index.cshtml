@@ -1,0 +1,76 @@
+﻿@model IEnumerable<IkinciElSatis.Models.Category>
+@{
+    ViewData["Title"] = "Kategori Yönetimi";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Kategori Yönetimi</h2>
+        <a asp-action="Create" class="btn btn-primary">+ Yeni Kategori</a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Kategori Hiyerarşisi</th>
+                        <th>Durum</th>
+                        <th class="text-end">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var category in Model.Where(c => c.ParentId == null))
+                        {
+                            await RenderCategory(category, 0);
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@{
+    async Task RenderCategory(IkinciElSatis.Models.Category category, int level)
+    {
+        var padding = level * 30;
+        var icon = level == 0 ? "bi-folder-fill" : "bi-arrow-return-right";
+        var color = level == 0 ? "fw-bold text-dark" : "text-secondary";
+
+        <tr>
+            <td style="padding-left: @(padding + 10)px;">
+                <span class="@color">
+                    <i class="bi @icon me-2"></i>@category.Name
+                </span>
+            </td>
+            <td>
+                @if (level == 0)
+                {
+                    <span class="badge bg-dark">Ana Kategori</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary opacity-75">Alt Kategori (@level. Seviye)</span>
+                }
+            </td>
+            <td class="text-end">
+                <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-sm btn-warning me-1">Düzenle</a>
+                <a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-sm btn-danger" onclick="return confirm('Silmek istediğine emin misin?')">Sil</a>
+            </td>
+        </tr>
+
+        var subCategories = Model.Where(c => c.ParentId == category.Id).ToList();
+        foreach (var sub in subCategories)
+        {
+            await RenderCategory(sub, level + 1);
+        }
+    }
+}

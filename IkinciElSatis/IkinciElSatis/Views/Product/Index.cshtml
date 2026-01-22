@@ -1,0 +1,88 @@
+﻿@model IEnumerable<IkinciElSatis.Models.Product>
+
+@{
+    ViewData["Title"] = "Vitrin";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="text-primary fw-bold">Vitrin</h2>
+            <p class="text-muted">Son eklenen ürünlere göz atın.</p>
+        </div>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a asp-action="Create" class="btn btn-success"><i class="bi bi-plus-lg"></i> Ürün Sat</a>
+        }
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form asp-action="Index" method="get">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Ürün ara..." value="@ViewData["CurrentFilter"]">
+                    <button class="btn btn-primary" type="submit">Ara</button>
+                    @if (ViewData["CurrentFilter"] != null)
+                    {
+                        <a asp-action="Index" class="btn btn-outline-secondary">Temizle</a>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 hover-effect">
+                    <div style="height: 250px; overflow: hidden; position: relative;">
+                        <a asp-action="Details" asp-route-id="@item.Id">
+                            @if (!string.IsNullOrEmpty(item.ImagePath))
+                            {
+                                <img src="/products/@item.ImagePath" class="card-img-top w-100 h-100" style="object-fit: cover;" alt="@item.Name">
+                            }
+                            else
+                            {
+                                <div class="d-flex align-items-center justify-content-center bg-light w-100 h-100 text-muted">
+                                    <i class="bi bi-image fs-1"></i>
+                                </div>
+                            }
+                        </a>
+                        <span class="position-absolute top-0 end-0 bg-primary text-white badge m-2">
+                            @item.Category?.Name
+                        </span>
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold text-truncate">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="text-dark text-decoration-none">@item.Name</a>
+                        </h5>
+                        <p class="card-text text-truncate text-muted small">@item.Description</p>
+                        <h4 class="text-success fw-bold mt-3">@item.Price.ToString("C0")</h4>
+                    </div>
+
+                    <div class="card-footer bg-white border-top-0">
+                        <div class="d-flex justify-content-between align-items-center small">
+                            <span class="text-muted">
+                                <i class="bi bi-person"></i>
+                                @if (item.User != null)
+                                {
+                                    <a asp-controller="Seller" asp-action="Profile" asp-route-id="@item.UserId" class="text-decoration-none fw-bold text-dark">
+                                        @item.User.FirstName @item.User.LastName
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span>Satıcı Bilinmiyor</span>
+                                }
+                            </span>
+
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm">İncele</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

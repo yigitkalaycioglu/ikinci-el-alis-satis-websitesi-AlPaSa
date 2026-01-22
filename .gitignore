@@ -1,0 +1,12 @@
+## Visual Studio Temporary Files
+.vs/
+.vscode/
+
+## Build Results
+bin/
+obj/
+
+## Database
+*.db
+*.db-shm
+*.db-wal

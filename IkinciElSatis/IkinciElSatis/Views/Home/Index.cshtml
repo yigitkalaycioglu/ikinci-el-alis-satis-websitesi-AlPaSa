@@ -1,0 +1,277 @@
+﻿@model IkinciElSatis.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Keşfet";
+}
+
+<div class="p-5 mb-5 rounded-4 text-center text-white position-relative overflow-hidden shadow-lg"
+     style="background: linear-gradient(120deg, #4f46e5, #ec4899); background-size: 200% 200%; animation: gradientBG 15s ease infinite;">
+
+    <div class="position-relative z-2">
+        <h1 class="display-4 fw-bold mb-3">Aradığın Fırsatı Yakala!</h1>
+        <p class="lead mb-4 opacity-90">Binlerce ürün, güvenli alışveriş ve anında satış imkanı AlPaSa'da.</p>
+
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-6">
+                <form asp-controller="Product" asp-action="Index" method="get">
+                    <div class="input-group input-group-lg shadow-sm rounded-pill overflow-hidden bg-white p-1">
+                        <input type="text" name="search" class="form-control border-0 ps-4 text-dark" placeholder="Kelime, ilan no veya mağaza adı..." style="box-shadow: none;">
+                        <button class="btn btn-primary rounded-pill px-4 fw-bold" type="submit">
+                            <i class="bi bi-search me-1"></i> ARA
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="position-absolute top-0 start-0 translate-middle rounded-circle bg-white opacity-10" style="width: 300px; height: 300px;"></div>
+    <div class="position-absolute bottom-0 end-0 translate-middle rounded-circle bg-warning opacity-10" style="width: 400px; height: 400px;"></div>
+</div>
+
+<style>
+    @@keyframes gradientBG {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    .transition-icon {
+        transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .nested {
+        display: none;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="sticky-top" style="top: 100px; z-index: 1;">
+
+            <div class="card border-0 mb-3 shadow-sm overflow-hidden">
+                <div class="card-header border-bottom-0 fw-bold py-3 d-flex align-items-center bg-white">
+                    <div class="bg-light rounded-circle p-2 me-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                        <i class="bi bi-grid text-primary"></i>
+                    </div>
+                    <span class="text-uppercase small text-muted fw-bold ls-1">Kategoriler</span>
+                </div>
+
+                <div class="card-body p-2">
+                    <div style="max-height: 60vh; overflow-y: auto;" class="custom-scroll px-1">
+                        <ul class="tree-list">
+                            @foreach (var category in Model.Categories)
+                            {
+                                await RenderSidebarTree(category);
+                            }
+                        </ul>
+                    </div>
+                    <div class="mt-3 pt-2 border-top">
+                        <a asp-controller="Category" asp-action="List" class="btn btn-light w-100 btn-sm text-primary fw-bold rounded-pill py-2">
+                            <i class="bi bi-collection me-1"></i> Tümünü Göster
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.DealOfTheDay != null)
+            {
+                <div class="card border-0 mb-4 text-center shadow overflow-hidden">
+                    <div class="position-relative">
+                        <a asp-controller="Product" asp-action="Details" asp-route-id="@Model.DealOfTheDay.Id" class="d-block hover-scale">
+                            @if (!string.IsNullOrEmpty(Model.DealOfTheDay.ImagePath))
+                            {
+                                <img src="/products/@Model.DealOfTheDay.ImagePath" class="card-img-top" style="height: 200px; object-fit: cover;">
+                            }
+                            else
+                            {
+                                <div class="bg-light py-5 text-muted"><i class="bi bi-gift fs-1"></i></div>
+                            }
+                        </a>
+                        <div class="position-absolute top-0 start-0 w-100 p-2 text-start">
+                            <span class="badge bg-danger shadow-sm py-2 px-3 rounded-pill">
+                                <i class="bi bi-fire me-1"></i> Popüler
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body p-3">
+                        <h6 class="fw-bold text-truncate text-dark mb-1">@Model.DealOfTheDay.Name</h6>
+                        <h4 class="text-primary fw-bold my-2">@Model.DealOfTheDay.Price.ToString("C0")</h4>
+
+                        <a asp-controller="Product" asp-action="Details" asp-route-id="@Model.DealOfTheDay.Id" class="btn btn-outline-primary w-100 rounded-pill btn-sm mt-2">
+                            İncele
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0 text-dark d-flex align-items-center">
+                <span class="bg-warning rounded-circle p-2 me-2 d-flex align-items-center justify-content-center" style="width:32px; height:32px;">
+                    <i class="bi bi-stars text-dark" style="font-size: 1rem;"></i>
+                </span>
+                Vitrin İlanları
+            </h4>
+            <a asp-controller="Product" asp-action="Index" class="btn btn-light rounded-pill px-3 small fw-bold text-primary">
+                Tümünü Gör <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+            @foreach (var item in Model.ShowcaseProducts)
+            {
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="hover-scale position-relative bg-light" style="height: 200px; overflow: hidden;">
+                            <a asp-controller="Product" asp-action="Details" asp-route-id="@item.Id">
+                                @if (!string.IsNullOrEmpty(item.ImagePath))
+                                {
+                                    <img src="/products/@item.ImagePath" class="w-100 h-100" style="object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                                        <i class="bi bi-camera fs-1"></i>
+                                    </div>
+                                }
+                            </a>
+                            <span class="position-absolute top-0 end-0 badge bg-white text-dark m-2 shadow-sm rounded-pill px-2 opacity-90 border">
+                                @item.Category?.Name
+                            </span>
+                        </div>
+
+                        <div class="card-body p-3 d-flex flex-column">
+                            <h6 class="card-title text-truncate mb-1 fw-bold">
+                                <a asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" class="text-dark text-decoration-none stretched-link">
+                                    @item.Name
+                                </a>
+                            </h6>
+
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-person-circle text-muted me-1 small"></i>
+                                <small class="text-muted text-truncate" style="max-width: 150px;">
+                                    @(item.User != null ? item.User.FirstName + " " + item.User.LastName : "Satıcı")
+                                </small>
+                            </div>
+
+                            <div class="mt-auto d-flex justify-content-between align-items-center border-top pt-3">
+                                <span class="text-primary fs-5 fw-bold">@item.Price.ToString("C0")</span>
+
+                                @{
+                                    bool isFav = User.Identity.IsAuthenticated && Model.UserFavoriteIds.Contains(item.Id);
+                                }
+                                <button class="btn btn-light btn-sm rounded-circle shadow-sm position-relative"
+                                        style="width:36px; height:36px; z-index: 2;"
+                                        onclick="toggleFavorite(this, @item.Id)"
+                                        title="@(isFav ? "Favorilerden Çıkar" : "Favorilere Ekle")">
+                                    <i class="bi @(isFav ? "bi-heart-fill text-danger" : "bi-heart") transition-icon fs-6"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+@{
+    async Task RenderSidebarTree(IkinciElSatis.Models.Category category)
+    {
+        var hasSub = category.SubCategories != null && category.SubCategories.Any();
+        var isActive = Context.Request.Query["categoryId"] == category.Id.ToString();
+        var activeClass = isActive ? "selected-category" : "";
+
+        <li>
+            <div class="tree-item @activeClass">
+                @if (hasSub)
+                {
+                    <span class="caret-box" onclick="toggleSidebarTree(this)">
+                        <i class="bi bi-chevron-right" style="font-size: 12px;"></i>
+                    </span>
+                }
+                else
+                {
+                    <span style="width: 32px;"></span>
+                }
+
+                <a asp-controller="Product" asp-action="Index" asp-route-categoryId="@category.Id" class="category-link small">
+                    @category.Name
+                </a>
+            </div>
+
+            @if (hasSub)
+            {
+                <ul class="nested tree-list">
+                    @foreach (var sub in category.SubCategories)
+                    {
+                        await RenderSidebarTree(sub);
+                    }
+                </ul>
+            }
+        </li>
+    }
+}
+
+<script>
+    function toggleSidebarTree(element) {
+        element.classList.toggle("caret-down");
+
+        var parentLi = element.closest("li");
+        var nestedList = parentLi.querySelector(".nested");
+
+        if (nestedList) {
+            $(nestedList).slideToggle(200); 
+        }
+
+        event.stopPropagation();
+    }
+
+    function toggleFavorite(btn, productId) {
+        @if (!User.Identity.IsAuthenticated)
+        {
+                <text>
+                alert("Favorilere eklemek için lütfen giriş yapınız.");
+                window.location.href = "/Account/Login";
+                return;
+                </text>
+        }
+
+        btn.disabled = true;
+
+        $.post('/Favorite/Toggle/' + productId, function (response) {
+            if (response.success) {
+                var icon = btn.querySelector("i");
+
+                if (response.status === "added") {
+                    icon.classList.remove("bi-heart");
+                    icon.classList.add("bi-heart-fill", "text-danger");
+                    btn.title = "Favorilerden Çıkar";
+                    icon.style.transform = "scale(1.3)";
+                    setTimeout(() => icon.style.transform = "scale(1)", 200);
+                } else {
+                    icon.classList.remove("bi-heart-fill", "text-danger");
+                    icon.classList.add("bi-heart");
+                    btn.title = "Favorilere Ekle";
+                }
+            } else {
+                alert("Hata oluştu.");
+            }
+            btn.disabled = false;
+        }).fail(function() {
+            alert("Sunucu hatası.");
+            btn.disabled = false;
+        });
+    }
+</script>

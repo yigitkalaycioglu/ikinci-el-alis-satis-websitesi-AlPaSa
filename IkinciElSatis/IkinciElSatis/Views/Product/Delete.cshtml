@@ -1,0 +1,36 @@
+﻿@model IkinciElSatis.Models.Product
+
+@{
+    ViewData["Title"] = "Ürünü Sil";
+}
+
+<div class="container mt-5">
+    <div class="alert alert-danger">
+        <h3>Bu ilanı kaldırmak istediğinize emin misiniz?</h3>
+        <p>Bu işlem geri alınamaz.</p>
+    </div>
+
+    <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                @if (!string.IsNullOrEmpty(Model.ImagePath))
+                {
+                    <img src="/products/@Model.ImagePath" class="img-fluid rounded-start h-100" style="object-fit: cover;">
+                }
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Name</h5>
+                    <p class="card-text">@Model.Description</p>
+                    <p class="card-text"><small class="text-muted">@Model.Price.ToString("C2")</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Evet, Sil</button>
+        <a asp-action="Index" class="btn btn-secondary">İptal</a>
+    </form>
+</div>

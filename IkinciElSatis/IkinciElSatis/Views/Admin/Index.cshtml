@@ -1,0 +1,72 @@
+﻿@model IkinciElSatis.ViewModels.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Yönetim Paneli";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">Yönetim Paneli (Dashboard)</h2>
+
+    <div class="row text-center">
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-primary shadow h-100">
+                <div class="card-header">Toplam Üye</div>
+                <div class="card-body">
+                    <h1 class="display-4 fw-bold">@Model.UserCount</h1>
+                    <p class="card-text"><i class="bi bi-people-fill fs-3"></i></p>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a asp-controller="AdminUser" asp-action="Index" class="text-white text-decoration-underline">Üyeleri Yönet</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-success shadow h-100">
+                <div class="card-header">Yayındaki İlanlar</div>
+                <div class="card-body">
+                    <h1 class="display-4 fw-bold">@Model.ProductCount</h1>
+                    <p class="card-text"><i class="bi bi-box-seam fs-3"></i></p>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a asp-controller="Product" asp-action="Index" class="text-white text-decoration-underline">İlanlara Git</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-warning shadow h-100">
+                <div class="card-header">Kategoriler</div>
+                <div class="card-body">
+                    <h1 class="display-4 fw-bold">@Model.CategoryCount</h1>
+                    <p class="card-text"><i class="bi bi-tags-fill fs-3"></i></p>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a asp-controller="Category" asp-action="Index" class="text-white text-decoration-underline">Kategorileri Yönet</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-secondary shadow h-100">
+            <div class="card-header">Sistem Kayıtları</div>
+            <div class="card-body text-center">
+                <h1 class="display-4 fw-bold"><i class="bi bi-journal-text"></i></h1>
+                <p class="card-text">Yapılan işlem geçmişini incele.</p>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a asp-controller="AdminLog" asp-action="Index" class="text-white text-decoration-underline">Logları Gör</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-4">
+        <h4><i class="bi bi-info-circle"></i> Admin Bilgilendirmesi</h4>
+        <p>
+            Buradan sistemdeki genel durumu özet olarak görebilirsiniz.
+            Kategori eklemek veya düzenlemek için turuncu kutudaki linki,
+            ilanları denetlemek için yeşil kutudaki linki kullanabilirsiniz.
+        </p>
+    </div>
+</div>

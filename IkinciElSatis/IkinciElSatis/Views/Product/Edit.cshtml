@@ -1,0 +1,53 @@
+﻿@model IkinciElSatis.Models.Product
+
+@{
+    ViewData["Title"] = "Ürün Düzenle";
+}
+
+<div class="container mt-4">
+    <h2>Ürün Düzenle</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Edit" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Price" class="form-label"></label>
+                    <input asp-for="Price" class="form-control" type="number" step="0.01" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CategoryId" class="form-label">Kategori</label>
+                    <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Mevcut Resim</label><br />
+                    @if (!string.IsNullOrEmpty(Model.ImagePath))
+                    {
+                        <img src="/products/@Model.ImagePath" width="100" class="img-thumbnail" />
+                    }
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ImageFile" class="form-label">Yeni Resim (Değiştirmek istemiyorsanız boş bırakın)</label>
+                    <input asp-for="ImageFile" class="form-control" type="file" accept="image/*" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Güncelle</button>
+                <a asp-action="Index" class="btn btn-secondary">İptal</a>
+            </form>
+        </div>
+    </div>
+</div>
